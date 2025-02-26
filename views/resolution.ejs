@@ -1,0 +1,53 @@
+<%- include("partials/head.ejs") %> <%- include("partials/header.ejs", {logout:
+'true'}) %>
+<h2 class="text-4xl text-green-700 font-bold mb-3">
+  <%= resolutionConfig[resolution.type].tags.join(" ") %>
+</h2>
+<div class="flex items-start gap-5">
+  <form
+    class="w-1/3 flex flex-col items-center"
+    id="resolutionForm"
+    method="POST"
+  >
+    <% if (resolution && resolution.id) { %>
+    <!-- When resolution has a type, we want to update it (PATCH) -->
+    <input type="hidden" name="id" value="<%= resolution.id %>"" /> <% } %>
+    <input type="hidden" name="type" value="<%= resolution.type %>"" /> <%
+    resolutionConfig[resolution.type].questions.forEach(function(question) { %>
+    <div class="flex flex-col mb-4 w-full">
+      <label name="goal_amount" class="text-base mb-2">
+        <%= question.label %></label
+      >
+      <input
+        type="<%= question.type %>"
+        name="<%= question.name %>"
+        placeholder="<%= question.placeholder %>"
+        class="border border-violet-900 rounded-md p-2"
+        value="<%= resolution[question.name] %>"
+      />
+    </div>
+    <% }); %>
+    <div class="flex gap-3 items-center">
+      <button class="bg-violet-900 text-white px-4 py-2 rounded-md">
+        Save
+      </button>
+      <% if (resolution && resolution.id) { %>
+      <button
+        class="bg-red-900 text-white px-4 py-2 rounded-md"
+        type="button"
+        id="deleteResolution"
+        data-type="<%= resolution.type %>"
+      >
+        Delete
+      </button>
+      <% } %>
+    </div>
+  </form>
+  <img
+    src="<%= resolutionConfig[resolution.type].image %>"
+    alt=""
+    class="flex-1 aspect-square"
+  />
+</div>
+
+<%- include("partials/footer.ejs") %>

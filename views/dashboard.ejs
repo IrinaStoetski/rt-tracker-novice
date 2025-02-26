@@ -1,0 +1,69 @@
+<%- include("partials/head.ejs") %> <%- include("partials/header.ejs", {logout:
+'true'}) %>
+
+<div class="flex items-center justify-between">
+  <h2 class="text-4xl text-green-700 font-bold mb-3">#dashboard</h2>
+  <div>
+    <% if (!resolutions.find(resolution => resolution.type === "read_books")) {
+    %>
+    <a
+      href="/resolution/read_books"
+      class="bg-violet-900 text-white p-4 rounded-md mr-4"
+      >Create books resolution</a
+    >
+    <% } %> <% if (!resolutions.find(resolution => resolution.type ===
+    "loose_weight")) { %>
+    <a
+      href="/resolution/loose_weight"
+      class="bg-violet-900 text-white p-4 rounded-md mr-4"
+      >Create loose weight resolution</a
+    >
+    <% } %>
+  </div>
+</div>
+<% if (resolutions && resolutions.length > 0) { %>
+<ul class="grid grid-cols-3 mt-4 gap-4">
+  <% resolutions.forEach(function(resolution) { %>
+  <li>
+    <a
+      class="bg-white p-4 shadow-md rounded-lg flex flex-col hover:shadow-xl transition"
+      href="/resolution<%= resolutionsConfig[resolution.type].link %>"
+    >
+      <% var donePercent = ((resolution.done_amount / resolution.goal_amount) *
+      100).toFixed(); %>
+      <h3 class="text-5xl mb-2 text-center">
+        <%= resolutionsConfig[resolution.type].title %>
+      </h3>
+      <span class="text-xl mb-1 mt-4"
+        >Goal:
+        <span class="text-3xl font-bold"><%= resolution.goal_amount %></span>
+        <%= resolutionsConfig[resolution.type].amount_text %></span
+      >
+      <span class="text-xl mb-1"
+        >Done:
+        <span class="text-green-700 text-3xl font-bold"
+          ><%= resolution.done_amount %></span
+        ></span
+      >
+      <div class="bg-slate-400 w-full h-2 rounded-lg mt-3">
+        <div
+          style="width: <%= donePercent %>%"
+          class="bg-green-700 h-full rounded-lg max-w-full"
+        ></div>
+      </div>
+      <div class="text-4xl text-green-700 font-bold w-full text-center mt-1">
+        <%= donePercent %>%
+      </div>
+    </a>
+  </li>
+  <% }); %>
+</ul>
+<% } else { %>
+<div class="flex items-center justify-center text-center text-base">
+  <p>
+    Here you’ll see all of your resolutions. <br />
+    Do not add more than 10. <br />
+    Stay focused on a few goals. <br />
+  </p>
+</div>
+<% } %> <%- include("partials/footer.ejs") %>
