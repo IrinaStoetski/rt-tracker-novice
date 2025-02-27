@@ -40,7 +40,6 @@ const registerDo = async (req, res, next) => {
 };
 
 const logoff = (req, res, next) => {
-  console.log(req.session);
   req.session.destroy(function (err) {
     if (err) {
       console.log(err);
