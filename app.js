@@ -22,8 +22,14 @@ app.use(express.static("public"));
 
 
 const MongoDBStore = require("connect-mongodb-session")(session);
+
+let mongoURL = process.env.MONGO_URI;
+if (process.env.NODE_ENV == "test") {
+  mongoURL = process.env.MONGO_URI_TEST;
+}
+
 const store = new MongoDBStore({
-  uri: process.env.MONGO_URI,
+  uri: mongoURL,
   collection: "mySessions",
 });
 
@@ -49,19 +55,36 @@ passportInit();
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use((req, res, next) => {
+  if (req.path == "/multiply") {
+    res.set("Content-Type", "application/json");
+  } else {
+    res.set("Content-Type", "text/html");
+  }
+  next();
+});
+
 app.use("/", require("./routes/root"));
 app.use("/sessions", require("./routes/sessionRoutes"));
 app.use("/resolution", authenticateUser, require("./routes/resolutions"));
 
+app.get("/multiply", (req, res) => {
+  let result = req.query.first * req.query.second;
+  if (result.isNaN) {
+    result = "NaN";
+  } else if (result == null) {
+    result = "null";
+  }
+  res.json({ result: result });
+});
+
 app.use(errorHandler);
-const connectDB = require("./db/connect");
 
 const port = process.env.PORT || 3000;
-
-const start = async () => {
+const start = () => {
   try {
-    await connectDB(process.env.MONGO_URI);
-    app.listen(port, () =>
+    require("./db/connect")(mongoURL);
+    return app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`),
     );
   } catch (error) {
@@ -70,3 +93,5 @@ const start = async () => {
 };
 
 start();
+
+module.exports = { app };

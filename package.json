@@ -8,7 +8,8 @@
     "tailwind:watch": "npx tailwindcss -i public/css/tailwind.css -o public/css/style.css --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "NODE_ENV=test mocha test/*.js --timeout 5000 --exit"
   },
   "author": "Iryna Stoietska",
   "license": "ISC",
